@@ -10,7 +10,7 @@ dnvm install 1.0.0-rc1-update2 -r clr -a x64
 dnvm list
 dnvm use 1.0.0-rc1-update2 -a x64 -r clr
 dnu feeds list
-dnu restore
+dnu restore -s https://www.nuget.org/api/v2 -s https://ci.appveyor.com/nuget/luma-smarthub -s https://ci.appveyor.com/nuget/luma-smarthub-audio-bass
 
 # run the build
 MSBuild src\Luma.SmartHub.sln /property:Configuration=$Configuration
