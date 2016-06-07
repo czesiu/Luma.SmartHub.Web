@@ -13,7 +13,7 @@ dnu feeds list
 dnu restore -s https://www.nuget.org/api/v2 -s https://ci.appveyor.com/nuget/luma-smarthub -s https://ci.appveyor.com/nuget/luma-smarthub-audio-bass
 
 # run the build
-MSBuild src\Luma.SmartHub.sln /property:Configuration=$Configuration
+MSBuild src\Luma.SmartHub.Web.sln /property:Configuration=$Configuration
 
 # tests
 # dnvm use 1.0.0-rc1-update2 -a x64 -r clr

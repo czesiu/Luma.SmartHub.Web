@@ -46,9 +46,12 @@ namespace Luma.SmartHub.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddMvcCore().AddApiExplorer();
+
             services.AddMvc();
 
             services.AddSingleton<IAudioHub, AudioHub>();
+            services.AddSingleton<IAudioPlayer, AudioPlayer>();
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
