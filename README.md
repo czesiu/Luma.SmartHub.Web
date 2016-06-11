@@ -1,2 +1,3 @@
 # Luma.SmartHub.Web
-Luma.SmartHub web interface
+
+Luma.SmartHub web interface implementation.

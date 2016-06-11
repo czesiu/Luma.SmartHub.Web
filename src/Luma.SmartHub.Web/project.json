@@ -8,9 +8,10 @@
   "dependencies": {
     "EntityFramework.Commands": "7.0.0-rc1-final",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
-    "Luma.SmartHub": "0.0.35",
-    "Luma.SmartHub.Audio": "0.0.35",
-    "Luma.SmartHub.Audio.Bass": "0.0.9",
+    "Luma.SmartHub": "0.0.38",
+    "Luma.SmartHub.Audio": "0.0.38",
+    "Luma.SmartHub.Audio.Bass": "0.0.11",
+    "Luma.SmartHub.Plugins.Youtube": "0.0.4",
     "ManagedBass": "0.22.0",
     "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
     "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",

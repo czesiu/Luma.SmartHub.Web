@@ -1,5 +1,7 @@
 ﻿using Luma.SmartHub.Audio;
 using Luma.SmartHub.Audio.Bass;
+using Luma.SmartHub.Audio.Playback;
+using Luma.SmartHub.Plugins.Youtube;
 using Luma.SmartHub.Web.Models;
 using Luma.SmartHub.Web.Services;
 using Microsoft.AspNet.Builder;
@@ -52,6 +54,8 @@ namespace Luma.SmartHub.Web
 
             services.AddSingleton<IAudioHub, AudioHub>();
             services.AddSingleton<IAudioPlayer, AudioPlayer>();
+            services.AddInstance(typeof(IPlaybackInfoProvider[]), new[] { new YoutubePlaybackInfoProvider() });
+            services.AddSingleton<IPlaybackManager, PlaybackManager>();
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();

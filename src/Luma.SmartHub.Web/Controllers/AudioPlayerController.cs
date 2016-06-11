@@ -91,6 +91,22 @@ namespace Luma.SmartHub.Web.Controllers
             playback.Stop();
         }
 
+        [HttpPut("{id}/volume/{volume}")]
+        public void Volume(string id, double volume)
+        {
+            var playback = _audioPlayer.Playbacks.Single(c => c.Id == id);
+
+            playback.Volume = volume;
+        }
+
+        [HttpPut("{id}/position/{position}")]
+        public void Position(string id, double position)
+        {
+            var playback = _audioPlayer.Playbacks.Single(c => c.Id == id);
+
+            playback.Position = position;
+        }
+
         [HttpPut("{id}/outgoingConnections/{deviceId}")]
         public void Put(string id, string deviceId)
         {
