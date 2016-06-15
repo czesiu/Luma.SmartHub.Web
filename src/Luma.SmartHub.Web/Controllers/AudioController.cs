@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Luma.SmartHub.Audio;
+using Luma.SmartHub.Audio.Playback;
 using Microsoft.AspNet.Mvc;
 
 namespace Luma.SmartHub.Web.Controllers
@@ -8,10 +9,15 @@ namespace Luma.SmartHub.Web.Controllers
     public class AudioController : Controller
     {
         private readonly IAudioPlayer _audioPlayer;
+        private readonly IPlaylistProvider _playlistProvider;
 
-        public AudioController(IAudioPlayer audioPlayer)
+        public AudioController(
+            IAudioPlayer audioPlayer,
+            IPlaylistProvider playlistProvider
+        )
         {
             _audioPlayer = audioPlayer;
+            _playlistProvider = playlistProvider;
         }
 
         [HttpGet]
@@ -59,6 +65,44 @@ namespace Luma.SmartHub.Web.Controllers
             var playback = _audioPlayer.Playbacks.Single(c => c.Id == id);
 
             playback.Stop();
+
+            return Index();
+        }
+
+        [HttpPost]
+        public ActionResult PlayPlaylist(string url, string deviceId)
+        {
+            var output = _audioPlayer.AudioHub.Outputs().Single(d => d.Id == deviceId);
+
+            var tracks = _playlistProvider.CreatePlaylist(new Uri(url));
+
+            var playback = new PlaylistPlayback(_audioPlayer.AudioHub, tracks);
+
+            playback.AddOutgoingConnection(output);
+
+            _audioPlayer.AddPlayback(playback);
+
+            playback.Play();
+
+            return Index();
+        }
+
+        [HttpPost]
+        public ActionResult Prev(string id)
+        {
+            var playlist = _audioPlayer.Playbacks.OfType<IPlaylistPlayback>().Single(c => c.Id == id);
+
+            playlist.Prev();
+
+            return Index();
+        }
+
+        [HttpPost]
+        public ActionResult Next(string id)
+        {
+            var playlist = _audioPlayer.Playbacks.OfType<IPlaylistPlayback>().Single(c => c.Id == id);
+
+            playlist.Next();
 
             return Index();
         }

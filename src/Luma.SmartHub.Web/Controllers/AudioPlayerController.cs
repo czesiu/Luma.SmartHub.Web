@@ -7,8 +7,6 @@ using Luma.SmartHub.Audio.Bass;
 using Luma.SmartHub.Audio.Playback;
 using Microsoft.AspNet.Mvc;
 
-// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Luma.SmartHub.Web.Controllers
 {
     [Route("api/[controller]")]
@@ -16,14 +14,17 @@ namespace Luma.SmartHub.Web.Controllers
     {
         private readonly IAudioHub _audioHub;
         private readonly IAudioPlayer _audioPlayer;
+        private readonly IPlaylistProvider _playlistProvider;
 
         public AudioPlayerController(
             IAudioHub audioHub,
-            IAudioPlayer audioPlayer
+            IAudioPlayer audioPlayer,
+            IPlaylistProvider playlistProvider
         )
         {
             _audioHub = audioHub;
             _audioPlayer = audioPlayer;
+            _playlistProvider = playlistProvider;
         }
 
         [HttpGet]
@@ -89,6 +90,53 @@ namespace Luma.SmartHub.Web.Controllers
             var playback = _audioPlayer.Playbacks.Single(c => c.Id == id);
 
             playback.Stop();
+        }
+
+        [HttpGet("playlists")]
+        public IEnumerable GetPlaylists()
+        {
+            return _audioPlayer.Playbacks.OfType<IPlaylistPlayback>().Select(c => new
+            {
+                c.Id,
+                c.Name,
+                c.IsPlaying,
+                c.Volume,
+                c.Tracks,
+                c.CurrentTrack,
+                OutgoingConnections = c.OutgoingConnections.Select(o => o.Id)
+            });
+        }
+
+        [HttpPost("playlists/play")]
+        public void PlayPlaylist([FromBody]PlayRequest request)
+        {
+            var outputs = request.OutgoingConnections.Select(c => _audioHub.Outputs().Single(d => d.Id == c));
+
+            var tracks = _playlistProvider.CreatePlaylist(request.Uri);
+
+            var playback = new PlaylistPlayback(_audioHub, tracks);
+
+            playback.AddOutgoingConnections(outputs);
+
+            _audioPlayer.AddPlayback(playback);
+
+            playback.Play();
+        }
+
+        [HttpPut("playlists/{id}/prev")]
+        public void Prev(string id)
+        {
+            var playlist = _audioPlayer.Playbacks.OfType<IPlaylistPlayback>().Single(c => c.Id == id);
+
+            playlist.Prev();
+        }
+
+        [HttpPut("playlists/{id}/next")]
+        public void Next(string id)
+        {
+            var playlist = _audioPlayer.Playbacks.OfType<IPlaylistPlayback>().Single(c => c.Id == id);
+
+            playlist.Next();
         }
 
         [HttpPut("{id}/volume/{volume}")]

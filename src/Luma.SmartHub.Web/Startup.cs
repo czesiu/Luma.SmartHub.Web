@@ -55,7 +55,8 @@ namespace Luma.SmartHub.Web
             services.AddSingleton<IAudioHub, AudioHub>();
             services.AddSingleton<IAudioPlayer, AudioPlayer>();
             services.AddInstance(typeof(IPlaybackInfoProvider[]), new[] { new YoutubePlaybackInfoProvider() });
-            services.AddSingleton<IPlaybackManager, PlaybackManager>();
+            services.AddSingleton<IPlaybackInfoProvider, CompositePlaybackInfoProvider>();
+            services.AddSingleton<IPlaylistProvider, YoutubePlaylistProvider>();
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();

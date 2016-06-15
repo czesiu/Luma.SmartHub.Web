@@ -6,22 +6,44 @@
 }
 <h2>@ViewData["Title"].</h2>
 
-<form method="POST" action="@Url.Action("PlayUrl")">
-    <div class="form-group">
-        <label class="control-label" for="deviceId">Device</label>
-        <select class="form-control" id="deviceId" name="deviceId">
-            @foreach (var device in ViewBag.Devices)
-            {
-                <option value="@device.Id">@device</option>
-            }
-        </select>
+<div class="row">
+    <div class="col-md-6">
+        <form method="POST" action="@Url.Action("PlayUrl")">
+            <div class="form-group">
+                <label class="control-label" for="deviceId">Device</label>
+                <select class="form-control" id="deviceId" name="deviceId">
+                    @foreach (var device in ViewBag.Devices)
+                    {
+                        <option value="@device.Id">@device</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="url">URL</label>
+                <input class="form-control" type="text" id="url" name="url"/>
+            </div>
+            <button class="btn btn-primary">Play</button>
+        </form>
     </div>
-    <div class="form-group">
-        <label class="control-label" for="url">URL</label>
-        <input class="form-control" type="text" id="url" name="url" />
+    <div class="col-md-6">
+        <form method="POST" action="@Url.Action("PlayPlaylist")">
+            <div class="form-group">
+                <label class="control-label" for="deviceId">Device</label>
+                <select class="form-control" id="deviceId" name="deviceId">
+                    @foreach (var device in ViewBag.Devices)
+                    {
+                        <option value="@device.Id">@device</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="url">URL</label>
+                <input class="form-control" type="text" id="url" name="url" />
+            </div>
+            <button class="btn btn-primary">Play playlist</button>
+        </form>
     </div>
-    <button class="btn btn-primary">Play</button>
-</form>
+</div>
 
 <h2>Playbacks</h2>
 <ul style="list-style-type: decimal">
@@ -31,19 +53,31 @@
             @playback.Name
 
             <div class="form-inline pull-right">
+                @if (playback is IPlaylistPlayback)
+                {
+                    <form class="form-group" method="POST" action="@Url.Action("Prev", new {playback.Id})">
+                        <button class="btn btn-sm btn-default">Prev</button>
+                    </form>
+                }
                 @if (playback.IsPlaying)
                 {
-                    <form class="form-group" method="POST" action="@Url.Action("Pause", new { playback.Id })">
+                    <form class="form-group" method="POST" action="@Url.Action("Pause", new {playback.Id})">
                         <button class="btn btn-sm btn-default">Pause</button>
                     </form>
-                    <form class="form-group" method="POST" action="@Url.Action("Stop", new { playback.Id })">
+                    <form class="form-group" method="POST" action="@Url.Action("Stop", new {playback.Id})">
                         <button class="btn btn-sm btn-default">Stop</button>
                     </form>
                 }
                 else
                 {
-                    <form class="form-group" method="POST" action="@Url.Action("Play", new { playback.Id })">
+                    <form class="form-group" method="POST" action="@Url.Action("Play", new {playback.Id})">
                         <button class="btn btn-sm btn-primary">Play</button>
+                    </form>
+                }
+                @if (playback is IPlaylistPlayback)
+                {
+                    <form class="form-group" method="POST" action="@Url.Action("Next", new {playback.Id})">
+                        <button class="btn btn-sm btn-default">Next</button>
                     </form>
                 }
 
@@ -51,13 +85,13 @@
                 {
                     if (playback.OutgoingConnections.Contains(device))
                     {
-                        <form class="form-group" method="POST" action="@Url.Action("RemoveOutgoingConnection", new { playback.Id, deviceId = device.Id })">
+                        <form class="form-group" method="POST" action="@Url.Action("RemoveOutgoingConnection", new {playback.Id, deviceId = device.Id})">
                             <button class="btn btn-sm btn-success">- @device.Id</button>
                         </form>
                     }
                     else
                     {
-                        <form class="form-group" method="POST" action="@Url.Action("AddOutgoingConnection", new { playback.Id, deviceId = device.Id })">
+                        <form class="form-group" method="POST" action="@Url.Action("AddOutgoingConnection", new {playback.Id, deviceId = device.Id})">
                             <button class="btn btn-sm btn-warning">+ @device.Id</button>
                         </form>
                     }
